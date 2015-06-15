@@ -1,5 +1,8 @@
-from flask import render_template, flash, redirect, session, url_for, request, \
-    g, jsonify
+import os
+import json
+
+from flask import Flask, render_template, flash, redirect, session, url_for, request, \
+    g, jsonify, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, \
     login_required
 from flask.ext.sqlalchemy import get_debug_queries
@@ -246,3 +249,34 @@ def translate():
             request.form['text'],
             request.form['sourceLang'],
             request.form['destLang'])})
+
+@app.route('/callback')
+def callback_handling():
+  env = os.environ
+  code = request.args.get('code')
+
+  json_header = {'content-type': 'application/json'}
+
+  token_url = "https://{domain}/oauth/token".format(domain='routeh.auth0.com')
+
+  token_payload = {
+    'client_id':     'hSfts0k1flA2qj5c6RFxdYQQtg7fTKfM',
+    'client_secret': 'pb7gAcmN7BBMYsDFZBcqUPrE06380OHuj7PH3Kz7SzoW8-9JqR2kXdk9lpoKGuWK',
+    'redirect_uri':  'http://localhost:CHANGE-TO-YOUR-PORT/callback',
+    'code':          code,
+    'grant_type':    'authorization_code'
+  }
+
+  token_info = request.post(token_url, data=json.dumps(token_payload), headers = json_header).json()
+
+  user_url = "https://{domain}/userinfo?access_token={access_token}" \
+      .format(domain='routeh.auth0.com', access_token=token_info['access_token'])
+
+  user_info = request.get(user_url).json()
+
+  # We're saving all user information into the session
+  session['profile'] = user_info
+
+  # Redirect to the User logged in page that you want here
+  # In our case it's /dashboard
+  return redirect('/index')
