@@ -65,6 +65,7 @@ def internal_error(error):
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/index/<int:page>', methods=['GET', 'POST'])
 @login_required
+@requires_auth
 def index(page=1):
     form = PostForm()
     if form.validate_on_submit():
@@ -81,7 +82,8 @@ def index(page=1):
     return render_template('index.html',
                            title='Home',
                            form=form,
-                           posts=posts)
+                           posts=posts,
+                           user=session['profile'])
 
 
 @app.route('/login', methods=['GET', 'POST'])

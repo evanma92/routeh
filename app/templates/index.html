@@ -9,7 +9,8 @@
         <div class="row">
           <div class="col-lg-5 col-sm-7">
             <div class="top_left_cont">
-              <h2>{{ _('Hi, %(nickname)s!', nickname=g.user.nickname) }}</h2>
+              <img class="avatar" src="{{user['picture']}}"/>
+              <h2>Welcome {{user['nickname']}}</h2>
               {% include 'flash.html' %}
                 <form class="form-horizontal" action="" method="post" name="post">
                     {{ form.hidden_tag() }}
