@@ -17,6 +17,15 @@ from .translate import microsoft_translate
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, \
     DATABASE_QUERY_TIMEOUT
 
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    if not session.has_key('profile'):
+      # Redirect to Login page here
+      return redirect('/')
+    return f(*args, **kwargs)
+
+  return decorated
 
 @lm.user_loader
 def load_user(id):
