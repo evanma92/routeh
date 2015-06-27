@@ -291,7 +291,7 @@ def callback_handling():
   # In our case it's /dashboard
   return redirect('/dashboard')
 
-@app.route("/dashboard")
+@app.route('/dashboard')
 @requires_auth
 def dashboard():
     return render_template('dashboard.html', user=session['profile'])
