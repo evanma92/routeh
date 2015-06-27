@@ -75,7 +75,6 @@ def internal_error(error):
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/index/<int:page>', methods=['GET', 'POST'])
 @login_required
-@requires_auth
 def index(page=1):
     form = PostForm()
     if form.validate_on_submit():
@@ -92,8 +91,7 @@ def index(page=1):
     return render_template('index.html',
                            title='Home',
                            form=form,
-                           posts=posts,
-                           user=session['profile'])
+                           posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -291,4 +289,9 @@ def callback_handling():
 
   # Redirect to the User logged in page that you want here
   # In our case it's /dashboard
-  return redirect('/index')
+  return redirect('/dashboard')
+
+@app.route("/dashboard")
+@requires_auth
+def dashboard():
+    return render_template('dashboard.html', user=session['profile'])
