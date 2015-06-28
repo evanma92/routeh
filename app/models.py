@@ -3,6 +3,8 @@ import re
 from app import db
 from app import app
 from config import WHOOSH_ENABLED
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.login import LoginManager, UserMixin
 
 import sys
 if sys.version_info >= (3, 0):
@@ -18,6 +20,17 @@ followers = db.Table(
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
+
+# for logging in through Social media
+db = SQLAlchemy(app)
+lm = LoginManager(app)
+
+class SocialUser(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    social_id = db.Column(db.String(64), nullable=False, unique=True)
+    nickname = db.Column(db.String(64), nullable=False)
+    email = db.Column(db.String(64), nullable=True)
 
 
 class User(db.Model):

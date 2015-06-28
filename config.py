@@ -51,3 +51,16 @@ ADMINS = ['you@example.com']
 # pagination
 POSTS_PER_PAGE = 50
 MAX_SEARCH_RESULTS = 50
+
+#OAUTH_Credentials
+
+OAUTH_CREDENTIALS = {
+    'facebook': {
+        'id': '965822203440139',
+        'secret':'19e720d77ee7d5c9286a43309bfbdb4a'
+    },
+    'twitter': {
+        'id': 'fO8hOHW1lcYB35gg74ol5FTLS',
+        'secret': 'wwbwrLHRvtAfdTTnTiV92xMYXQGphAyo72JtnJ7SY3qeB5iMI5',
+    }
+}

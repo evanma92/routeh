@@ -18,6 +18,8 @@ from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, \
     DATABASE_QUERY_TIMEOUT
 from functools import wraps
 
+from oauth import OAuthSignIn
+
 def requires_auth(f):
   @wraps(f)
   def decorated(*args, **kwargs):
@@ -260,38 +262,62 @@ def translate():
             request.form['sourceLang'],
             request.form['destLang'])})
 
-@app.route('/callback')
-def callback_handling():
-  env = os.environ
-  code = request.args.get('code')
+@app.route('/authorize/<provider>')
+def oauth_authorize(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('index'))
+    oauth = OAuthSignIn.get_provider(provider)
+    return oauth.authorize()
 
-  json_header = {'content-type': 'application/json'}
+@app.route('/callback/<provider>')
+def oauth_callback(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('index'))
+    oauth = OAuthSignIn.get_provider(provider)
+    social_id, username, email = oauth.callback()
+    if social_id is None:
+        flash('Authentication failed.')
+        return redirect(url_for('index'))
+    user = SocialUser.query.filter_by(social_id=social_id).first()
+    if not user:
+        user = SocialUser(social_id=social_id, nickname=username, email=email)
+        db.session.add(user)
+        db.session.commit()
+    login_user(user, True)
+    return redirect(url_for('index'))
 
-  token_url = "https://{domain}/oauth/token".format(domain='routeh.auth0.com')
+#@app.route('/callback')
+#def callback_handling():
+#  env = os.environ
+#  code = request.args.get('code')
+#
+#  json_header = {'content-type': 'application/json'}
+#
+#  token_url = "https://{domain}/oauth/token".format(domain='routeh.auth0.com')
+#
+# token_payload = {
+#    'client_id':     'hSfts0k1flA2qj5c6RFxdYQQtg7fTKfM',
+#    'client_secret': 'pb7gAcmN7BBMYsDFZBcqUPrE06380OHuj7PH3Kz7SzoW8-9JqR2kXdk9lpoKGuWK',
+#    'redirect_uri':  'http://localhost:CHANGE-TO-YOUR-PORT/callback',
+#    'code':          code,
+#    'grant_type':    'authorization_code'
+#  }
 
-  token_payload = {
-    'client_id':     'hSfts0k1flA2qj5c6RFxdYQQtg7fTKfM',
-    'client_secret': 'pb7gAcmN7BBMYsDFZBcqUPrE06380OHuj7PH3Kz7SzoW8-9JqR2kXdk9lpoKGuWK',
-    'redirect_uri':  'http://localhost:CHANGE-TO-YOUR-PORT/callback',
-    'code':          code,
-    'grant_type':    'authorization_code'
-  }
+#  token_info = request.post(token_url, data=json.dumps(token_payload), headers = json_header).json()
 
-  token_info = request.post(token_url, data=json.dumps(token_payload), headers = json_header).json()
+#  user_url = "https://{domain}/userinfo?access_token={access_token}" \
+#      .format(domain='routeh.auth0.com', access_token=token_info['access_token'])
 
-  user_url = "https://{domain}/userinfo?access_token={access_token}" \
-      .format(domain='routeh.auth0.com', access_token=token_info['access_token'])
-
-  user_info = request.get(user_url).json()
+#  user_info = request.get(user_url).json()
 
   # We're saving all user information into the session
-  session['profile'] = user_info
+#  session['profile'] = user_info
 
   # Redirect to the User logged in page that you want here
   # In our case it's /dashboard
-  return redirect('/dashboard')
+#  return redirect('/dashboard')
 
-@app.route('/dashboard')
-@requires_auth
-def dashboard():
-    return render_template('dashboard.html', user=session['profile'])
+#@app.route('/dashboard')
+#@requires_auth
+#def dashboard():
+#    return render_template('dashboard.html', user=session['profile'])
