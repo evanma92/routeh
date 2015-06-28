@@ -24,6 +24,7 @@ followers = db.Table(
 # for logging in through Social media
 db = SQLAlchemy(app)
 lm = LoginManager(app)
+lm.login_view = 'login'
 
 class SocialUser(UserMixin, db.Model):
     __tablename__ = 'users'
