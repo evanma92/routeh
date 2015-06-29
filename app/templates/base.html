@@ -110,8 +110,8 @@
             <ul class="toggle">
               <li><a href="{{ url_for('home') }}">{{ _('Main') }}</a></li>
               <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
-              {% if g.user.is_authenticated() %}
-              <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
+              {% if current_user.is_authenticated() %}
+              <li><a href="{{ url_for('user', nickname=current_user.nickname) }}">{{ _('Your Profile') }}</a></li>
               <li><a href="{{ url_for('logout') }}" onclick="signOut();">{{ _('logout') }}</a></li>
               <script>
                 function signOut() {
@@ -127,8 +127,8 @@
             <ul class="">
               <li><a href="{{ url_for('home') }}">{{ _('Main') }}</a></li>
               <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
-              {% if g.user.is_authenticated() %}
-              <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
+              {% if current_user.is_authenticated() %}
+              <li><a href="{{ url_for('user', nickname=current_user.nickname) }}">{{ _('Your Profile') }}</a></li>
               <li><a href="{{ url_for('logout') }}">{{ _('logout') }}</a></li>
               {% endif %}
             </ul>

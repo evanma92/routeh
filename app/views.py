@@ -278,9 +278,9 @@ def oauth_callback(provider):
     if social_id is None:
         flash('Authentication failed.')
         return redirect(url_for('index'))
-    user = SocialUser.query.filter_by(social_id=social_id).first()
+    user = User.query.filter_by(social_id=social_id).first()
     if not user:
-        user = SocialUser(social_id=social_id, nickname=username, email=email)
+        user = User(social_id=social_id, nickname=username, email=email)
         db.session.add(user)
         db.session.commit()
     login_user(user, True)

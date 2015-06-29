@@ -30,6 +30,9 @@ class OAuthSignIn(object):
 		return self.providers[provider_name]
 
 class FacebookSignIn(OAuthSignIn):
+	def get_callback_url(self):
+			return url_for('oauth_callback', provider=self.provider_name, _external=True)
+
 	def __init__(self):
 		super(FacebookSignIn, self).__init__('facebook')
 		self.service = OAuth2Service(
@@ -58,7 +61,7 @@ class FacebookSignIn(OAuthSignIn):
 		)
 		me = oauth_session.get('me').json()
 		return ('facebook$' + me['id'],
-				met.get('email').split('@')[0],
+				me.get('email').split('@')[0],
 				me.get('email')
 		)
 
