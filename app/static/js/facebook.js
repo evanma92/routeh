@@ -39,6 +39,23 @@
     version    : 'v2.2' // use version 2.2
   });
 
+  window.fbLoaded();
+
+  window.fbLoaded = function(){
+      var fetch_my_profile = function () {
+          /*
+          Fetching profile picture from Facebook.
+          For more detail, please visit the following url:
+          (Graph API: User/Picture reference)
+          https://developers.facebook.com/docs/graph-api/reference/user/picture/
+          */
+          FB.api('/{user-id}/picture?width=250', function(response) {
+              var my_picture_url = response.data.url;
+          
+              $("#my-profile-picture").attr('src', my_picture_url);
+          });
+      };
+  };
   // Now that we've initialized the JavaScript SDK, we call 
   // FB.getLoginStatus().  This function gets the state of the
   // person visiting this page and can return one of three states to

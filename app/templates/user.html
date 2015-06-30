@@ -4,6 +4,7 @@
 {% block content %}
     {% include 'flash.html' %}
 <!-- User Info -->
+
 <section id="top_content" class="top_cont_outer">
   <div class="top_cont_inner">
     <div class="container">
@@ -17,7 +18,7 @@
               {% if user.last_seen %}
               <p><em>{{ _('Last seen:') }} {{ momentjs(user.last_seen).calendar() }}</em></p>
               {% endif %}
-              <p>{{ _('Followers:') }} {{ user.followers.count() - 1 }} | {{ _('Following:') }} {{ user.followed.count() - 1 }} |
+              <p>{{ _('Followers:') }} {{ user.followers.count()}} | {{ _('Following:') }} {{ user.followed.count()}} |
               {% if user.id == g.user.id %}
               <a href="{{ url_for('edit') }}">{{ _('Edit your profile') }}</a>
               {% elif not g.user.is_following(user) %}
@@ -29,7 +30,7 @@
             </div>
         </div>
         <div class="col-lg-7 col-sm-5"> 
-              <img class="img-responsive" src="{{ user.avatar(128) }}" alt="">
+              <img id="my-profile-picture" class="img-thumbnail" src="" alt="">
              </div>
           </div>
       </div>
